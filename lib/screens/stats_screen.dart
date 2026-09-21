@@ -40,7 +40,7 @@ class StatsScreen extends StatelessWidget {
           Text('Тренировок по неделям', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 12),
           SizedBox(
-            height: 160,
+            height: 200,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
