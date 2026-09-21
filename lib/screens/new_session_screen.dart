@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/mock_data.dart';
+import '../widgets/exercise_card.dart';
 
 // Форма новой сессии. На L2 это макет: без валидации и без сохранения.
 class NewSessionScreen extends StatelessWidget {
@@ -22,17 +23,8 @@ class NewSessionScreen extends StatelessWidget {
           const SizedBox(height: 16),
           Text('Упражнения', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 4,
-            children: mockExercises
-                .map((e) => FilterChip(
-                      label: Text(e.name),
-                      selected: false,
-                      onSelected: (_) {},
-                    ))
-                .toList(),
-          ),
+          // та же карточка, что и в каталоге (переиспользуемый виджет)
+          ...mockExercises.map((e) => ExerciseCard(exercise: e, onTap: () {})),
           const SizedBox(height: 16),
           const TextField(
             keyboardType: TextInputType.number,
