@@ -52,7 +52,7 @@ class StatsScreen extends StatelessWidget {
                     const SizedBox(height: 4),
                     Container(
                       width: 32,
-                      height: w.$2 * 26,
+                      height: w.$2 * 26.0,
                       decoration: BoxDecoration(
                         color: scheme.primary,
                         borderRadius: BorderRadius.circular(6),
