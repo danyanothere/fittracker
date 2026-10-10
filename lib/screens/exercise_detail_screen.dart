@@ -3,12 +3,14 @@ import '../data/mock_data.dart';
 import '../widgets/label_value_row.dart';
 
 class ExerciseDetailScreen extends StatelessWidget {
-  final Exercise exercise;
+  final int id;
 
-  const ExerciseDetailScreen({super.key, required this.exercise});
+  const ExerciseDetailScreen({super.key, required this.id});
 
   @override
   Widget build(BuildContext context) {
+    // в адресе путешествует id, экран сам ищет свой объект (на L5 это будет backend)
+    final exercise = mockExercises.firstWhere((e) => e.id == id);
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: Text(exercise.name)),

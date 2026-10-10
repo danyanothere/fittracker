@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../data/mock_data.dart';
 import '../widgets/exercise_card.dart';
-import 'exercise_detail_screen.dart';
 
 // Каталог упражнений: поиск и фильтр по группе мышц (пока только визуально, L4).
 class CatalogScreen extends StatelessWidget {
@@ -48,12 +48,8 @@ class CatalogScreen extends StatelessWidget {
                 final exercise = mockExercises[index];
                 return ExerciseCard(
                   exercise: exercise,
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ExerciseDetailScreen(exercise: exercise),
-                    ),
-                  ),
+                  // зайду и вернусь -> push, id едет в адресе
+                  onTap: () => context.push('/catalog/${exercise.id}'),
                 );
               },
             ),
