@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart';
+import 'router.dart';
 
 void main() => runApp(const FitTrackApp());
 
@@ -8,7 +8,7 @@ class FitTrackApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'FitTrack',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -19,7 +19,7 @@ class FitTrackApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const LoginScreen(),
+      routerConfig: router,
     );
   }
 }
