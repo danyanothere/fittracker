@@ -1,21 +1,42 @@
 import 'package:flutter/material.dart';
-import 'home_shell.dart';
+import 'package:go_router/go_router.dart';
 
-// Статический экран входа. Валидации и логики нет — только UI (L2).
-class LoginScreen extends StatelessWidget {
+// Экран входа: локальная валидация (без реальной аутентификации — это L5).
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _emailCtrl = TextEditingController();
+  final _passwordCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailCtrl.dispose();
+    _passwordCtrl.dispose();
+    super.dispose();
+  }
+
+  void _login() {
+    if (!_formKey.currentState!.validate()) return;
+    context.go('/catalog'); // go, НЕ push: login уходит из стека
+  }
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            padding: const EdgeInsets.all(24),
             children: [
+              const SizedBox(height: 40),
               Icon(Icons.fitness_center, size: 72, color: scheme.primary),
               const SizedBox(height: 16),
               Text(
@@ -30,28 +51,37 @@ class LoginScreen extends StatelessWidget {
                 style: TextStyle(color: scheme.onSurfaceVariant),
               ),
               const SizedBox(height: 40),
-              const TextField(
-                decoration: InputDecoration(
+              TextFormField(
+                controller: _emailCtrl,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                decoration: const InputDecoration(
                   labelText: 'E-mail',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email_outlined),
                 ),
+                validator: (value) {
+                  final email = value?.trim() ?? '';
+                  if (email.isEmpty) return 'Введите e-mail';
+                  if (!email.contains('@')) return 'Некорректный e-mail';
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
-              const TextField(
+              TextFormField(
+                controller: _passwordCtrl,
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Пароль',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.lock_outline),
                 ),
+                validator: (value) =>
+                    (value == null || value.length < 6) ? 'Минимум 6 символов' : null,
               ),
               const SizedBox(height: 24),
               FilledButton(
-                onPressed: () => Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => const HomeShell()),
-                ),
+                onPressed: _login,
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
                   child: Text('Войти'),
