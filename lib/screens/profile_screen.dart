@@ -1,8 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../widgets/label_value_row.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
+
+  // блокирующее решение -> AlertDialog с результатом (C6)
+  Future<void> _logout(BuildContext context) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (dialogCtx) => AlertDialog(
+        title: const Text('Выйти из аккаунта?'),
+        content: const Text('Придётся войти заново.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogCtx, false),
+            child: const Text('Нет'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogCtx, true),
+            child: const Text('Да, выйти'),
+          ),
+        ],
+      ),
+    );
+    if (ok == true && context.mounted) {
+      context.go('/login'); // go: раздел с вкладками уходит из стека
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +85,7 @@ class ProfileScreen extends StatelessWidget {
                 ListTile(
                   leading: Icon(Icons.logout, color: scheme.error),
                   title: Text('Выйти', style: TextStyle(color: scheme.error)),
-                  onTap: () {},
+                  onTap: () => _logout(context),
                 ),
               ],
             ),
