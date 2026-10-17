@@ -1,12 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../data/mock_exercise_repository.dart';
+import '../data/mock_session_repository.dart';
 import '../widgets/label_value_row.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
-  // блокирующее решение -> AlertDialog с результатом (C6)
-  Future<void> _logout(BuildContext context) async {
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool _simulateError = false; // эфемерное состояние -> setState (C7)
+
+  void _toggleError(bool value) {
+    setState(() => _simulateError = value);
+    // единственное место UI, которому позволено знать о mock-е
+    context.read<MockExerciseRepository>().simulateError = value;
+    context.read<MockSessionRepository>().simulateError = value;
+  }
+
+  Future<void> _logout() async {
     final ok = await showDialog<bool>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
@@ -24,9 +40,7 @@ class ProfileScreen extends StatelessWidget {
         ],
       ),
     );
-    if (ok == true && context.mounted) {
-      context.go('/login'); // go: раздел с вкладками уходит из стека
-    }
+    if (ok == true && mounted) context.go('/login');
   }
 
   @override
@@ -43,10 +57,8 @@ class ProfileScreen extends StatelessWidget {
                 CircleAvatar(
                   radius: 44,
                   backgroundColor: scheme.primaryContainer,
-                  child: Text(
-                    'DD',
-                    style: TextStyle(fontSize: 28, color: scheme.onPrimaryContainer),
-                  ),
+                  child: Text('DD',
+                      style: TextStyle(fontSize: 28, color: scheme.onPrimaryContainer)),
                 ),
                 const SizedBox(height: 12),
                 Text('Daniil Driga', style: Theme.of(context).textTheme.titleLarge),
@@ -72,20 +84,16 @@ class ProfileScreen extends StatelessWidget {
           Card(
             child: Column(
               children: [
-                ListTile(
-                  leading: const Icon(Icons.notifications_outlined),
-                  title: const Text('Уведомления'),
-                  trailing: Switch(value: true, onChanged: (_) {}),
-                ),
-                const ListTile(
-                  leading: Icon(Icons.straighten),
-                  title: Text('Единицы измерения'),
-                  trailing: Text('кг, см'),
+                SwitchListTile(
+                  secondary: const Icon(Icons.cloud_off),
+                  title: const Text('Симулировать сбой сети'),
+                  value: _simulateError,
+                  onChanged: _toggleError,
                 ),
                 ListTile(
                   leading: Icon(Icons.logout, color: scheme.error),
                   title: Text('Выйти', style: TextStyle(color: scheme.error)),
-                  onTap: () => _logout(context),
+                  onTap: _logout,
                 ),
               ],
             ),
