@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import '../data/mock_data.dart';
+import 'package:provider/provider.dart';
+import '../models/catalog_model.dart';
+import '../models/diary_model.dart';
+import '../models/workout_session.dart';
 
-// Форма новой сессии: валидация локальная, данные никуда не сохраняются (контракт L3).
+// Форма новой сессии: валидный submit ПИШЕТ в модель через repository.
 class NewSessionScreen extends StatefulWidget {
   const NewSessionScreen({super.key});
 
@@ -17,27 +20,36 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
   final _durationCtrl = TextEditingController();
   final _notesCtrl = TextEditingController();
   String? _exercise;
-  bool _done = true;
 
   @override
   void dispose() {
-    // кто создаёт контроллер, тот его освобождает (C6)
     _dateCtrl.dispose();
     _durationCtrl.dispose();
     _notesCtrl.dispose();
     super.dispose();
   }
 
-  void _save() {
-    if (!_formKey.currentState!.validate()) return; // ошибки уже на экране
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Сохранено: тренировка ${_dateCtrl.text.trim()}')),
+  Future<void> _save() async {
+    if (!_formKey.currentState!.validate()) return; // валидация L3, нетронута
+    final draft = WorkoutSession(
+      id: 0, // временный id — настоящую идентичность даст хранилище
+      date: _dateCtrl.text.trim(),
+      exercises: [_exercise!],
+      durationMin: int.parse(_durationCtrl.text),
+      notes: _notesCtrl.text.trim(),
     );
-    context.pop(); // открыто push-ем -> закрывается pop-ом
+    final error = await context.read<DiaryModel>().add(draft);
+    if (!mounted) return; // экран может умереть, пока "запрос" летит
+    if (error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
+      return; // данные остаются в полях
+    }
+    context.pop(); // список позади УЖЕ вырос — notifyListeners известил его
   }
 
   @override
   Widget build(BuildContext context) {
+    final exercises = context.watch<CatalogModel>().exercises;
     return Scaffold(
       appBar: AppBar(title: const Text('Новая тренировка')),
       body: Form(
@@ -64,7 +76,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.fitness_center),
               ),
-              items: mockExercises
+              items: exercises
                   .map((e) => DropdownMenuItem(value: e.name, child: Text(e.name)))
                   .toList(),
               onChanged: (value) => setState(() => _exercise = value),
@@ -97,11 +109,6 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
                 border: OutlineInputBorder(),
                 alignLabelWithHint: true,
               ),
-            ),
-            SwitchListTile(
-              title: const Text('Тренировка завершена'),
-              value: _done,
-              onChanged: (value) => setState(() => _done = value),
             ),
             const SizedBox(height: 16),
             FilledButton(
