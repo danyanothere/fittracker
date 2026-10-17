@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../data/mock_data.dart';
+import 'package:provider/provider.dart';
+import '../models/catalog_model.dart';
+import '../models/exercise.dart';
 import '../widgets/exercise_card.dart';
+import '../widgets/error_view.dart';
 
-// Каталог упражнений: поиск и фильтр по группе мышц (пока только визуально, L4).
+// Каталог упражнений: данные из модели, три состояния loading/data/error.
 class CatalogScreen extends StatelessWidget {
   const CatalogScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Каталог упражнений')),
-      body: Column(
+    final model = context.watch<CatalogModel>(); // watch в build (C7)
+
+    final Widget body;
+    if (model.isLoading) {
+      body = const Center(child: CircularProgressIndicator());
+    } else if (model.error != null) {
+      body = ErrorView(
+        message: model.error!,
+        onRetry: () => context.read<CatalogModel>().load(), // read: действие
+      );
+    } else {
+      body = Column(
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
@@ -19,9 +31,7 @@ class CatalogScreen extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: 'Поиск упражнения',
                 prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
           ),
@@ -42,20 +52,24 @@ class CatalogScreen extends StatelessWidget {
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.all(16),
-              itemCount: mockExercises.length,
+              itemCount: model.exercises.length,
               separatorBuilder: (_, _) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
-                final exercise = mockExercises[index];
+                final Exercise exercise = model.exercises[index];
                 return ExerciseCard(
                   exercise: exercise,
-                  // зайду и вернусь -> push, id едет в адресе
                   onTap: () => context.push('/catalog/${exercise.id}'),
                 );
               },
             ),
           ),
         ],
-      ),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Каталог упражнений')),
+      body: body,
     );
   }
 }

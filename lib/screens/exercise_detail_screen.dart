@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../data/mock_data.dart';
+import 'package:provider/provider.dart';
+import '../models/catalog_model.dart';
 import '../widgets/label_value_row.dart';
 
 class ExerciseDetailScreen extends StatelessWidget {
@@ -9,15 +10,27 @@ class ExerciseDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // в адресе путешествует id, экран сам ищет свой объект (на L5 это будет backend)
-    final exercise = mockExercises.firstWhere((e) => e.id == id);
+    final model = context.watch<CatalogModel>();
+    final exercise = model.byId(id); // ищем через модель, а не через mock
+
+    if (exercise == null) {
+      // у null два смысла: список ещё грузится или id реально нет
+      return Scaffold(
+        appBar: AppBar(),
+        body: Center(
+          child: model.isLoading
+              ? const CircularProgressIndicator()
+              : const Text('Упражнение не существует'),
+        ),
+      );
+    }
+
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: Text(exercise.name)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // изображение-заглушка: цветной контейнер с иконкой
           Container(
             height: 180,
             decoration: BoxDecoration(
