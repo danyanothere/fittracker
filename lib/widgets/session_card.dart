@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../data/mock_data.dart';
+import '../models/workout_session.dart';
 
 // Карточка тренировочной сессии для дневника.
 class SessionCard extends StatelessWidget {

@@ -1,38 +1,6 @@
-// Модели данных темы FitTrack и зашитые mock-данные
-
-class Exercise {
-  final int id;
-  final String name;
-  final String muscleGroup;
-  final String description;
-  final String technique;
-
-  const Exercise({
-    required this.id,
-    required this.name,
-    required this.muscleGroup,
-    required this.description,
-    required this.technique,
-  });
-}
-
-class WorkoutSession {
-  final int id;
-  final String date;
-  final List<String> exercises;
-  final int durationMin;
-  final String notes;
-
-  const WorkoutSession({
-    required this.id,
-    required this.date,
-    required this.exercises,
-    required this.durationMin,
-    required this.notes,
-  });
-}
-
-const muscleGroups = ['Все', 'Ноги', 'Грудь', 'Спина', 'Плечи', 'Кор', 'Всё тело'];
+// Только seed-данные. Единственный клиент — mock-репозитории; экраны сюда не ходят.
+import '../models/exercise.dart';
+import '../models/workout_session.dart';
 
 const mockExercises = [
   Exercise(

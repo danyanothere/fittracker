@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../data/mock_data.dart';
+import '../models/exercise.dart';
 
 // Карточка упражнения. Используется в каталоге и в форме новой сессии.
 class ExerciseCard extends StatelessWidget {
