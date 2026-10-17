@@ -21,7 +21,9 @@ class DiaryScreen extends StatelessWidget {
         onRetry: () => context.read<DiaryModel>().load(),
       );
     } else {
-      body = ListView.separated(
+      body = RefreshIndicator(
+        onRefresh: () => context.read<DiaryModel>().load(),
+        child: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: model.sessions.length,
         separatorBuilder: (_, _) => const SizedBox(height: 8),
@@ -43,6 +45,7 @@ class DiaryScreen extends StatelessWidget {
             child: SessionCard(session: session),
           );
         },
+        ),
       );
     }
 

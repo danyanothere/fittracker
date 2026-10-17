@@ -50,17 +50,21 @@ class CatalogScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.all(16),
-              itemCount: model.exercises.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 8),
-              itemBuilder: (context, index) {
-                final Exercise exercise = model.exercises[index];
-                return ExerciseCard(
-                  exercise: exercise,
-                  onTap: () => context.push('/catalog/${exercise.id}'),
-                );
-              },
+            child: RefreshIndicator(
+              // потянуть вниз -> перезагрузка через модель
+              onRefresh: () => context.read<CatalogModel>().load(),
+              child: ListView.separated(
+                padding: const EdgeInsets.all(16),
+                itemCount: model.exercises.length,
+                separatorBuilder: (_, _) => const SizedBox(height: 8),
+                itemBuilder: (context, index) {
+                  final Exercise exercise = model.exercises[index];
+                  return ExerciseCard(
+                    exercise: exercise,
+                    onTap: () => context.push('/catalog/${exercise.id}'),
+                  );
+                },
+              ),
             ),
           ),
         ],
