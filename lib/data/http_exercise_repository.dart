@@ -29,11 +29,15 @@ class HttpExerciseRepository implements ExerciseRepository {
   }
 
   @override
-  Future<Result<List<Exercise>>> fetchAll() async {
+  Future<Result<List<Exercise>>> fetchAll({int page = 1, int limit = 20, String? search}) async {
     try {
-      final res = await http
-          .get(Uri.parse('$baseUrl/exercises?limit=100'), headers: await _headers())
-          .timeout(_timeout);
+      // адрес получает query-параметры: пагинация и поиск идут НА СЕРВЕР
+      final uri = Uri.parse('$baseUrl/exercises').replace(queryParameters: {
+        'page': '$page',
+        'limit': '$limit',
+        if (search != null && search.isNotEmpty) 'search': search,
+      });
+      final res = await http.get(uri, headers: await _headers()).timeout(_timeout);
       if (res.statusCode == 401) return Err(await _sessionDied());
       if (res.statusCode != 200) return Err(apiMessage(res)); // слой 2
       final data = jsonDecode(res.body) as Map<String, dynamic>; // конверт
