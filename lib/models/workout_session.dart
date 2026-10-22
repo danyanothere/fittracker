@@ -22,4 +22,22 @@ class WorkoutSession {
         durationMin: durationMin,
         notes: notes,
       );
+
+  // граница JSON (L5)
+  factory WorkoutSession.fromJson(Map<String, dynamic> j) => WorkoutSession(
+        id: j['id'] as int,
+        date: j['date'] as String? ?? '',
+        exercises:
+            (j['exercises'] as List? ?? const []).map((e) => e as String).toList(),
+        durationMin: (j['durationMin'] as num?)?.toInt() ?? 0,
+        notes: j['notes'] as String? ?? '',
+      );
+
+  // без id — идентичность даёт сервер
+  Map<String, dynamic> toJson() => {
+        'date': date,
+        'exercises': exercises,
+        'durationMin': durationMin,
+        'notes': notes,
+      };
 }
