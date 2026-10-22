@@ -1,28 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../data/mock_exercise_repository.dart';
-import '../data/mock_session_repository.dart';
+import '../data/auth_api.dart';
 import '../widgets/label_value_row.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
-  @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  bool _simulateError = false; // эфемерное состояние -> setState (C7)
-
-  void _toggleError(bool value) {
-    setState(() => _simulateError = value);
-    // единственное место UI, которому позволено знать о mock-е
-    context.read<MockExerciseRepository>().simulateError = value;
-    context.read<MockSessionRepository>().simulateError = value;
-  }
-
-  Future<void> _logout() async {
+  Future<void> _logout(BuildContext context) async {
     final ok = await showDialog<bool>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
@@ -40,7 +25,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
     );
-    if (ok == true && mounted) context.go('/login');
+    if (ok != true || !context.mounted) return;
+    await context.read<AuthApi>().logout(); // token стирается из prefs
+    if (context.mounted) context.go('/login');
   }
 
   @override
@@ -84,16 +71,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Card(
             child: Column(
               children: [
-                SwitchListTile(
-                  secondary: const Icon(Icons.cloud_off),
-                  title: const Text('Симулировать сбой сети'),
-                  value: _simulateError,
-                  onChanged: _toggleError,
+                const ListTile(
+                  leading: Icon(Icons.notifications_outlined),
+                  title: Text('Уведомления'),
+                  trailing: Text('вкл'),
+                ),
+                const ListTile(
+                  leading: Icon(Icons.straighten),
+                  title: Text('Единицы измерения'),
+                  trailing: Text('кг, см'),
                 ),
                 ListTile(
                   leading: Icon(Icons.logout, color: scheme.error),
                   title: Text('Выйти', style: TextStyle(color: scheme.error)),
-                  onTap: _logout,
+                  onTap: () => _logout(context),
                 ),
               ],
             ),
