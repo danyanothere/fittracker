@@ -6,6 +6,12 @@ import '../models/catalog_model.dart';
 import '../models/diary_model.dart';
 import '../models/workout_session.dart';
 
+const _months = [
+  'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+  'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+];
+String _fmtDate(DateTime d) => '${d.day} ${_months[d.month - 1]} ${d.year}';
+
 // Форма новой сессии: валидный submit ПИШЕТ в модель через repository.
 class NewSessionScreen extends StatefulWidget {
   const NewSessionScreen({super.key});
@@ -29,22 +35,35 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
     super.dispose();
   }
 
+  Future<void> _pickDate() async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: DateTime(now.year - 2),
+      lastDate: DateTime(now.year + 1),
+    );
+    if (picked != null) {
+      setState(() => _dateCtrl.text = _fmtDate(picked));
+    }
+  }
+
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) return; // валидация L3, нетронута
+    if (!_formKey.currentState!.validate()) return;
     final draft = WorkoutSession(
-      id: 0, // временный id — настоящую идентичность даст хранилище
+      id: 0, // временный id — настоящую идентичность даст сервер
       date: _dateCtrl.text.trim(),
       exercises: [_exercise!],
       durationMin: int.parse(_durationCtrl.text),
       notes: _notesCtrl.text.trim(),
     );
     final error = await context.read<DiaryModel>().add(draft);
-    if (!mounted) return; // экран может умереть, пока "запрос" летит
+    if (!mounted) return;
     if (error != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error)));
-      return; // данные остаются в полях
+      return;
     }
-    context.pop(); // список позади УЖЕ вырос — notifyListeners известил его
+    context.pop(); // список позади уже вырос через notifyListeners
   }
 
   @override
@@ -57,23 +76,24 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            // поле только для чтения: тап открывает календарь
             TextFormField(
               controller: _dateCtrl,
-              textInputAction: TextInputAction.next,
+              readOnly: true,
+              onTap: _pickDate,
               decoration: const InputDecoration(
                 labelText: 'Дата',
-                border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.calendar_today),
+                suffixIcon: Icon(Icons.expand_more),
               ),
               validator: (value) =>
-                  (value == null || value.trim().isEmpty) ? 'Укажите дату' : null,
+                  (value == null || value.trim().isEmpty) ? 'Выберите дату' : null,
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               initialValue: _exercise,
               decoration: const InputDecoration(
                 labelText: 'Упражнение',
-                border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.fitness_center),
               ),
               items: exercises
@@ -90,7 +110,6 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
               textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
                 labelText: 'Длительность, мин',
-                border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.timer_outlined),
               ),
               validator: (value) {
@@ -106,17 +125,13 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
               maxLines: 4,
               decoration: const InputDecoration(
                 labelText: 'Заметки',
-                border: OutlineInputBorder(),
                 alignLabelWithHint: true,
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
             FilledButton(
               onPressed: _save,
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 12),
-                child: Text('Сохранить'),
-              ),
+              child: const Text('Сохранить'),
             ),
           ],
         ),
