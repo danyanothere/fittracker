@@ -17,16 +17,22 @@ class StatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Card(
-      color: scheme.surfaceContainerHighest,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: scheme.primary),
-            const SizedBox(height: 12),
-            Text(value, style: Theme.of(context).textTheme.headlineSmall),
-            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: scheme.primaryContainer,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: scheme.onPrimaryContainer, size: 20),
+            ),
+            const SizedBox(height: 14),
+            Text(value, style: Theme.of(context).textTheme.headlineMedium),
+            const SizedBox(height: 2),
             Text(label, style: TextStyle(color: scheme.onSurfaceVariant)),
           ],
         ),
