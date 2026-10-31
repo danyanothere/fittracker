@@ -34,10 +34,9 @@ class CatalogScreen extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: TextField(
               textInputAction: TextInputAction.search,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Поиск упражнения',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                prefixIcon: Icon(Icons.search),
               ),
               // поиск уходит НА СЕРВЕР
               onSubmitted: (q) => context.read<CatalogModel>().load(search: q),

@@ -72,7 +72,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
                     labelText: 'Имя',
-                    border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.person_outline),
                   ),
                   validator: (value) =>
@@ -86,7 +85,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
                   labelText: 'E-mail',
-                  border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email_outlined),
                 ),
                 validator: (value) {
@@ -102,7 +100,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: true,
                 decoration: const InputDecoration(
                   labelText: 'Пароль',
-                  border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.lock_outline),
                 ),
                 validator: (value) =>
