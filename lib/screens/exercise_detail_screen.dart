@@ -33,16 +33,23 @@ class ExerciseDetailScreen extends StatelessWidget {
         children: [
           Container(
             height: 180,
+            width: double.infinity,
+            alignment: Alignment.center,
             decoration: BoxDecoration(
               color: scheme.primaryContainer,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(22),
             ),
             child: Icon(Icons.fitness_center, size: 80, color: scheme.onPrimaryContainer),
           ),
           const SizedBox(height: 16),
-          Text(exercise.name, style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 8),
-          Chip(label: Text(exercise.muscleGroup)),
+          Text(exercise.name,
+              style: Theme.of(context).textTheme.headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 10),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Chip(label: Text(exercise.muscleGroup)),
+          ),
           const SizedBox(height: 16),
           Card(
             child: Padding(

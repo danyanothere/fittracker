@@ -56,7 +56,8 @@ ThemeData _buildTheme() {
       backgroundColor: scheme.surface,
       surfaceTintColor: Colors.transparent,
       centerTitle: false,
-      titleTextStyle: base.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+      toolbarHeight: 68,
+      titleTextStyle: base.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
     ),
     cardTheme: CardThemeData(
       color: scheme.surfaceContainerHigh,

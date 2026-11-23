@@ -38,22 +38,45 @@ class ProfileScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Center(
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 44,
-                  backgroundColor: scheme.primaryContainer,
-                  child: Text('DD',
-                      style: TextStyle(fontSize: 28, color: scheme.onPrimaryContainer)),
-                ),
-                const SizedBox(height: 12),
-                Text('Daniil Driga', style: Theme.of(context).textTheme.titleLarge),
-                Text('Футбол · любитель', style: TextStyle(color: scheme.onSurfaceVariant)),
-              ],
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 34,
+                    backgroundColor: scheme.primaryContainer,
+                    child: Text('DD',
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w700,
+                            color: scheme.onPrimaryContainer)),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Daniil Driga',
+                            style: Theme.of(context).textTheme.titleLarge),
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: scheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Text('Футбол · любитель',
+                              style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),

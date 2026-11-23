@@ -61,36 +61,53 @@ class StatsScreen extends StatelessWidget {
             Expanded(child: StatTile(icon: Icons.calendar_month, value: perWeek, label: 'В неделю')),
           ],
         ),
-        const SizedBox(height: 24),
-        Text('Тренировок по неделям', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 12),
-        SizedBox(
-          height: 200,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: _weeks.map((w) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text('${w.$2}'),
-                  const SizedBox(height: 4),
-                  Container(
-                    width: 32,
-                    height: w.$2 * 26.0,
-                    decoration: BoxDecoration(
-                      color: scheme.primary,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(18, 18, 18, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Тренировок по неделям',
+                    style: Theme.of(context).textTheme.titleMedium
+                        ?.copyWith(fontWeight: FontWeight.w700)),
+                const SizedBox(height: 18),
+                SizedBox(
+                  height: 180,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: _weeks.map((w) {
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text('${w.$2}',
+                              style: TextStyle(
+                                  color: scheme.onSurfaceVariant, fontSize: 12)),
+                          const SizedBox(height: 6),
+                          Container(
+                            width: 30,
+                            height: w.$2 * 24.0,
+                            decoration: BoxDecoration(
+                              color: scheme.primary,
+                              borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(10)),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(w.$1,
+                              style: TextStyle(
+                                  color: scheme.onSurfaceVariant, fontSize: 12)),
+                        ],
+                      );
+                    }).toList(),
                   ),
-                  const SizedBox(height: 6),
-                  Text(w.$1, style: TextStyle(color: scheme.onSurfaceVariant)),
-                ],
-              );
-            }).toList(),
+                ),
+              ],
+            ),
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 12),
         Card(
           child: Padding(
             padding: const EdgeInsets.all(16),

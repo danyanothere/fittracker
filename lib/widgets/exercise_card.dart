@@ -11,19 +11,52 @@ class ExerciseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final text = Theme.of(context).textTheme;
     return Card(
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: scheme.primaryContainer,
-          child: Text(
-            exercise.name[0],
-            style: TextStyle(color: scheme.onPrimaryContainer),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: scheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Text(
+                  exercise.name.isEmpty ? '?' : exercise.name[0],
+                  style: text.titleLarge?.copyWith(color: scheme.onPrimaryContainer),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      exercise.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: text.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      exercise.muscleGroup,
+                      style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                    ),
+                  ],
+                ),
+              ),
+              if (onTap != null)
+                Icon(Icons.chevron_right, color: scheme.onSurfaceVariant),
+            ],
           ),
         ),
-        title: Text(exercise.name),
-        subtitle: Text(exercise.muscleGroup),
-        trailing: onTap == null ? null : const Icon(Icons.chevron_right),
-        onTap: onTap,
       ),
     );
   }
