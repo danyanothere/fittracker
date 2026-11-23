@@ -5,12 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/catalog_model.dart';
 import '../models/diary_model.dart';
 import '../models/workout_session.dart';
-
-const _months = [
-  'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
-  'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
-];
-String _fmtDate(DateTime d) => '${d.day} ${_months[d.month - 1]} ${d.year}';
+import '../utils/ru_date.dart';
 
 // Форма новой сессии: валидный submit ПИШЕТ в модель через repository.
 class NewSessionScreen extends StatefulWidget {
@@ -44,7 +39,7 @@ class _NewSessionScreenState extends State<NewSessionScreen> {
       lastDate: DateTime(now.year + 1),
     );
     if (picked != null) {
-      setState(() => _dateCtrl.text = _fmtDate(picked));
+      setState(() => _dateCtrl.text = formatRuDate(picked));
     }
   }
 

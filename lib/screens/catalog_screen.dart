@@ -4,7 +4,11 @@ import 'package:provider/provider.dart';
 import '../models/catalog_model.dart';
 import '../models/exercise.dart';
 import '../widgets/exercise_card.dart';
+import '../widgets/muscle_figure.dart';
 import '../widgets/error_view.dart';
+
+// группы, которые умеет подсвечивать силуэт (подмножество muscleGroups)
+const _figureGroups = {'Ноги', 'Грудь', 'Спина', 'Плечи', 'Кор'};
 
 // Каталог упражнений: данные с сервера, три состояния, поиск и пагинация на сервере.
 class CatalogScreen extends StatelessWidget {
@@ -42,6 +46,7 @@ class CatalogScreen extends StatelessWidget {
               onSubmitted: (q) => context.read<CatalogModel>().load(search: q),
             ),
           ),
+          _muscleCard(context, model),
           SizedBox(
             height: 48,
             child: ListView.separated(
@@ -67,6 +72,74 @@ class CatalogScreen extends StatelessWidget {
           ),
           Expanded(child: body),
         ],
+      ),
+    );
+  }
+
+  // карточка с силуэтом тела: тап по мышце фильтрует каталог (тот же серверный поиск)
+  Widget _muscleCard(BuildContext context, CatalogModel model) {
+    final scheme = Theme.of(context).colorScheme;
+    final text = Theme.of(context).textTheme;
+    final sel = _figureGroups.contains(model.search) ? model.search : null;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 108,
+                child: MuscleFigure(
+                  selected: sel,
+                  onSelect: (g) => context.read<CatalogModel>().load(search: g),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Группы мышц',
+                        style: text.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Нажми на часть тела, чтобы показать нужные упражнения',
+                      style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+                    ),
+                    const SizedBox(height: 14),
+                    if (sel != null) ...[
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: scheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(sel,
+                            style: text.labelLarge
+                                ?.copyWith(color: scheme.onPrimaryContainer)),
+                      ),
+                      const SizedBox(height: 8),
+                      TextButton.icon(
+                        onPressed: () => context.read<CatalogModel>().load(search: ''),
+                        icon: const Icon(Icons.close, size: 18),
+                        label: const Text('Сбросить'),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: const Size(0, 0),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
+                    ] else
+                      Text('Группа не выбрана',
+                          style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
